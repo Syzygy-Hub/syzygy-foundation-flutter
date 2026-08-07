@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: '3.44.8'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/Syzygy-Hub/.github/948d4cf819a30989d277c8abea615e585f37e188/engineering/tooling/flutter/analysis_options.yaml \
+            -o analysis_options.yaml
+          flutter analyze --fatal-warnings
+
+      - name: Test with coverage
+        run: flutter test --coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coverage
+          path: coverage
+          if-no-files-found: warn
+
+      - name: Coverage summary
+        run: |
+          if [ -f coverage/lcov.info ]; then
+            LINES_FOUND=$(grep -c "^DA:" coverage/lcov.info || echo 0)
+            LINES_HIT=$(grep "^DA:" coverage/lcov.info | grep -cv ",0$" || echo 0)
+            {
+              echo "## Coverage Report"
+              echo "Lines found: $LINES_FOUND"
+              echo "Lines hit: $LINES_HIT"
+              if [ "$LINES_FOUND" -gt 0 ]; then
+                PCT=$(( LINES_HIT * 100 / LINES_FOUND ))
+                echo "Coverage: ${PCT}%"
+              fi
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Coverage Report — lcov.info not found." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  release:
+    name: Release
+    needs: [build]
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      startsWith(github.event.head_commit.message, 'release:')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: '3.44.8'
+          channel: stable
+
+      - name: Read version from syzygy.yml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' syzygy.yml | sed 's/version: //' | tr -d ' ')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Sync pubspec.yaml version
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          PUBSPEC_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d ' ')
+          if [ "$PUBSPEC_VERSION" != "$VERSION" ]; then
+            echo "Updating pubspec.yaml version from $PUBSPEC_VERSION to $VERSION"
+            sed -i "s/^version: .*/version: $VERSION/" pubspec.yaml
+          else
+            echo "Versions match: $PUBSPEC_VERSION"
+          fi
+
+      - name: Setup pub credentials
+        run: |
+          mkdir -p $HOME/.config/dart
+          echo '${{ secrets.PUB_CREDENTIALS }}' > $HOME/.config/dart/pub-credentials.json
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Publish to pub.dev
+        run: dart pub publish --force
+
+      - name: Verify pub.dev publish
+        run: |
+          PKG_VERSION="${{ steps.version.outputs.VERSION }}"
+          for i in $(seq 1 30); do
+            LATEST=$(curl -fsSL https://pub.dev/api/packages/syzygy_foundation_flutter | jq -r '.latest.version' 2>/dev/null || echo "")
+            if [ "$LATEST" = "$PKG_VERSION" ]; then
+              echo "✅ pub.dev shows syzygy_foundation_flutter@$PKG_VERSION"
+              exit 0
+            fi
+            echo "Attempt $i/30: pub.dev shows '$LATEST', expected '$PKG_VERSION' — waiting 10s for propagation..."
+            sleep 10
+          done
+          echo "::error::Publish verification failed — pub.dev never reported syzygy_foundation_flutter@$PKG_VERSION"
+          exit 1
+
+      - name: Delete existing tag if present
+        run: git push origin :refs/tags/${{ steps.version.outputs.VERSION }} || true
+
+      - name: Extract CHANGELOG entry
+        run: |
+          awk '/^## \[/{if(found) exit; found=1; next} found' CHANGELOG.md > release_notes.txt
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.version.outputs.VERSION }}" \
+            --title "${{ steps.version.outputs.VERSION }}" \
+            --notes-file release_notes.txt

@@ -1,0 +1,13 @@
+name: syzygy_foundation_flutter
+description: Foundational contracts, primitives, and shared types for the Syzygy Flutter ecosystem
+version: 1.0.0
+homepage: https://github.com/Syzygy-Hub/syzygy-foundation-flutter
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies: {}
+
+dev_dependencies:
+  flutter_lints: ^3.0.0
+  test: ^1.24.0
