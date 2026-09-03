@@ -46,5 +46,5 @@ abstract class Fixtures {
         timestamp: SyzygyTimestamp(0),
       );
 
-  static SyzygyVersion syzygyVersion() => const SyzygyVersion(1, 0, 0);
+  static SyzygyVersion syzygyVersion() => const SyzygyVersion(1, 1, 0);
 }

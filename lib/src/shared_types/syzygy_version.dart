@@ -7,7 +7,7 @@ class SyzygyVersion implements Comparable<SyzygyVersion> {
 
   const SyzygyVersion(this.major, this.minor, this.patch, {this.prerelease});
 
-  static const current = SyzygyVersion(1, 0, 0);
+  static const current = SyzygyVersion(1, 1, 0);
 
   @override
   String toString() => prerelease != null

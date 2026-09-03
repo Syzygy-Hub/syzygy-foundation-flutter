@@ -1,17 +1,47 @@
-[![Flutter](https://img.shields.io/badge/Flutter-Dart-7F77DD?style=flat)](https://flutter.dev/) [![Dart](https://img.shields.io/badge/Dart-3.0-1D9E75?logo=dart&logoColor=white&style=flat)](https://dart.dev) [![CI](https://img.shields.io/github/actions/workflow/status/Syzygy-Hub/syzygy-foundation-flutter/ci.yml?label=ci&style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/actions/workflows/ci.yml) [![Version](https://img.shields.io/badge/version-1.0.0-D85A30?style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/releases) [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
+[![Flutter](https://img.shields.io/badge/Flutter-Dart-7F77DD?style=flat)](https://flutter.dev/) [![Dart](https://img.shields.io/badge/Dart-3.0-1D9E75?logo=dart&logoColor=white&style=flat)](https://dart.dev) [![CI](https://img.shields.io/github/actions/workflow/status/Syzygy-Hub/syzygy-foundation-flutter/ci.yml?label=ci&style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/actions/workflows/ci.yml) [![Version](https://img.shields.io/badge/version-1.1.0-D85A30?style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/releases) [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Syzygy-Hub/.github/main/brand/syzygy-banner-dark-1200.png">
-  <img src="https://raw.githubusercontent.com/Syzygy-Hub/.github/main/brand/syzygy-banner-light-1200.png" alt="Syzygy" width="600">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Syzygy-Hub/.github/main/brand/assets/banners/syzygy-banner-dark-1200.png">
+  <img src="https://raw.githubusercontent.com/Syzygy-Hub/.github/main/brand/assets/banners/syzygy-banner-light-1200.png" alt="Syzygy" width="600">
 </picture>
 
 # syzygy-foundation-flutter
 
-Contracts, primitives, and shared types for the Flutter Syzygy ecosystem — zero implementation, zero dependencies.
+The root layer of the Syzygy ecosystem — providing SharedTypes, base protocols, and shared contracts that every peer layer builds on.
 
 ## About
 
 syzygy-foundation-flutter is the base layer every other Syzygy Flutter library depends on. It defines the abstract classes that Services implements, the value types that UI and Core consume, and the error types the whole stack shares. Nothing in Foundation has behaviour beyond property storage — no network calls, no platform APIs, no business logic. Swap any implementation in Services or Core by extending these contracts; Foundation never needs to change.
+
+## Role in the Syzygy Ecosystem
+
+`syzygy-foundation-flutter` is the root layer — the only dependency shared by all peer layers. It depends on nothing. Every peer layer (UI, Core, Services, AI) depends on Foundation and nothing else.
+
+Full ecosystem architecture: [ecosystem-fragment.md](https://github.com/Syzygy-Hub/.github/blob/main/docs/ecosystem-fragment.md)
+
+### Shared Contracts
+
+Foundation defines the shared contracts that all peer layers consume. These contracts are the abstraction layer that allows UI, Core, Services and AI to each depend on Foundation without depending on each other.
+
+- **`NetworkClientProtocol`** — abstracts HTTP networking so any peer layer can make network requests without depending on a concrete implementation. `syzygy-services-flutter` provides the concrete Dio implementation.
+- **`AuthProvider`** — abstracts authentication and token management. `syzygy-services-flutter` provides the concrete OAuth and flutter_secure_storage implementations.
+- **`StorageProvider`** — abstracts local persistence. `syzygy-services-flutter` provides the concrete flutter_secure_storage implementation.
+- **`LoggerProtocol`** — abstracts logging and observability so all peer layers can log without depending on a specific logging framework.
+
+> These contracts are currently defined as planned interfaces. Concrete implementations will ship with `syzygy-services-flutter` in Phase 2 of the ecosystem roadmap.
+
+## Release Process
+
+Releases follow the Syzygy tag-push release flow:
+
+1. Create a `release/X.X.X` branch
+2. Bump the version in `syzygy.yml`, `pubspec.yaml`, the README badge, and `CHANGELOG.md`
+3. Open a PR to `main` and wait for CI to pass
+4. Merge the PR
+5. Push the tag: `git tag X.X.X` and `git push origin X.X.X`
+6. The tag push triggers the org-level release workflow which validates `syzygy.yml` matches the tag, extracts the CHANGELOG entry, publishes to pub.dev, and creates the GitHub Release
+
+For the full release standard see the [Syzygy-Hub/.github release standard](https://github.com/Syzygy-Hub/.github/blob/main/engineering/standards/release-standard.md).
 
 ## Platforms
 
@@ -28,7 +58,7 @@ syzygy-foundation-flutter is the base layer every other Syzygy Flutter library d
 
 ```yaml
 dependencies:
-  syzygy_foundation_flutter: ^1.0.0
+  syzygy_foundation_flutter: ^1.1.0
 ```
 
 ```dart
@@ -48,7 +78,7 @@ SyzygyFoundation exposes two libraries:
 
 **Depends on:** nothing
 
-**Used by:** syzygy-ui-flutter, syzygy-core-flutter, syzygy-services-flutter
+**Used by:** syzygy-ui-flutter, syzygy-core-flutter, syzygy-services-flutter, syzygy-ai-flutter
 
 For the full ecosystem architecture see [syzygy-ecosystem.md](https://github.com/Syzygy-Hub/.github/blob/main/engineering/architecture/syzygy-ecosystem.md).
 
@@ -153,19 +183,6 @@ void main() {
 ## Contributing
 
 Contributions are welcome. Please follow the [Syzygy engineering standards](https://github.com/Syzygy-Hub/.github/tree/main/engineering/standards) when submitting pull requests.
-
-## Releases
-
-Releases follow the Syzygy commit-message flow:
-
-1. Create branch `release/X.X.X`
-2. Bump version in manifest and `syzygy.yml`
-3. Update `CHANGELOG.md`
-4. Open PR → `main`
-5. Get approval and merge with commit message starting with **`release:`** (e.g. `release: 1.0.0`)
-6. CI detects the `release:` prefix → reads version from `syzygy.yml` → creates git tag and GitHub Release automatically
-
-See the [Syzygy Release Standard](https://github.com/Syzygy-Hub/.github/blob/main/engineering/standards/release-standard.md) for full details.
 
 ## License
 
