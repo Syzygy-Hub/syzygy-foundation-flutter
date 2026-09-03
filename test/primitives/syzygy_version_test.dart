@@ -20,12 +20,12 @@ void main() {
       expect(a.compareTo(b), isNegative);
     });
 
-    test('current is 1.0.0', () {
-      expect(SyzygyVersion.current, const SyzygyVersion(1, 0, 0));
+    test('current is 1.1.0', () {
+      expect(SyzygyVersion.current, const SyzygyVersion(1, 1, 0));
     });
 
     test('current version string matches release', () {
-      expect(SyzygyVersion.current.toString(), '1.0.0');
+      expect(SyzygyVersion.current.toString(), '1.1.0');
     });
   });
 }
