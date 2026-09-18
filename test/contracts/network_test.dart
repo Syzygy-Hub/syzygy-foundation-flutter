@@ -34,19 +34,31 @@ void main() {
     NetworkResponse response(int code) =>
         NetworkResponse(statusCode: code, data: Uint8List(0));
 
-    test('isSuccess true for 200', () => expect(response(200).isSuccess, isTrue));
-    test('isSuccess true for 299', () => expect(response(299).isSuccess, isTrue));
-    test('isSuccess false for 300', () => expect(response(300).isSuccess, isFalse));
-    test('isSuccess false for 400', () => expect(response(400).isSuccess, isFalse));
-    test('isSuccess false for 500', () => expect(response(500).isSuccess, isFalse));
+    test('isSuccess true for 200',
+        () => expect(response(200).isSuccess, isTrue));
+    test('isSuccess true for 299',
+        () => expect(response(299).isSuccess, isTrue));
+    test('isSuccess false for 300',
+        () => expect(response(300).isSuccess, isFalse));
+    test('isSuccess false for 400',
+        () => expect(response(400).isSuccess, isFalse));
+    test('isSuccess false for 500',
+        () => expect(response(500).isSuccess, isFalse));
 
-    test('isClientError true for 400', () => expect(response(400).isClientError, isTrue));
-    test('isClientError true for 499', () => expect(response(499).isClientError, isTrue));
-    test('isClientError false for 500', () => expect(response(500).isClientError, isFalse));
-    test('isClientError false for 200', () => expect(response(200).isClientError, isFalse));
+    test('isClientError true for 400',
+        () => expect(response(400).isClientError, isTrue));
+    test('isClientError true for 499',
+        () => expect(response(499).isClientError, isTrue));
+    test('isClientError false for 500',
+        () => expect(response(500).isClientError, isFalse));
+    test('isClientError false for 200',
+        () => expect(response(200).isClientError, isFalse));
 
-    test('isServerError true for 500', () => expect(response(500).isServerError, isTrue));
-    test('isServerError true for 599', () => expect(response(599).isServerError, isTrue));
-    test('isServerError false for 400', () => expect(response(400).isServerError, isFalse));
+    test('isServerError true for 500',
+        () => expect(response(500).isServerError, isTrue));
+    test('isServerError true for 599',
+        () => expect(response(599).isServerError, isTrue));
+    test('isServerError false for 400',
+        () => expect(response(400).isServerError, isFalse));
   });
 }

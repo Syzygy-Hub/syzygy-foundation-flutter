@@ -37,8 +37,7 @@ abstract class Fixtures {
         headers: const {},
       );
 
-  static AnalyticsEvent analyticsEvent() =>
-      AnalyticsEvent(name: 'test_event');
+  static AnalyticsEvent analyticsEvent() => AnalyticsEvent(name: 'test_event');
 
   static LogEntry logEntry() => const LogEntry(
         level: LogLevel.info,
@@ -46,5 +45,5 @@ abstract class Fixtures {
         timestamp: SyzygyTimestamp(0),
       );
 
-  static SyzygyVersion syzygyVersion() => const SyzygyVersion(1, 1, 0);
+  static SyzygyVersion syzygyVersion() => const SyzygyVersion(1, 2, 0);
 }
