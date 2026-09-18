@@ -16,6 +16,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ---
 
+## [1.2.0] - 2026-09-18
+
+### Fixed
+- Restored missing doc comment on `NetworkClientProtocol`
+- Removed stray blank line in `AuthProvider`
+
+### Changed
+- CI: Flutter channel pinned to stable, version 3.44.8
+
+---
+
 ## [1.1.0] — 2026-09-03
 
 ### Changed
@@ -102,6 +113,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - CI coverage step added: `flutter test --coverage` + lcov line coverage summary written to `GITHUB_STEP_SUMMARY`
 - README rewritten to Syzygy engineering standard
 
-[Unreleased]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/releases/tag/1.0.0

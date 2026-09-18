@@ -15,8 +15,7 @@ class Page<T> {
   bool get hasNextPage => pageNumber * pageSize < totalCount;
   bool get hasPreviousPage => pageNumber > 1;
   bool get isEmpty => items.isEmpty;
-  int get totalPages =>
-      pageSize == 0 ? 0 : (totalCount / pageSize).ceil();
+  int get totalPages => pageSize == 0 ? 0 : (totalCount / pageSize).ceil();
 
   @override
   bool operator ==(Object other) =>

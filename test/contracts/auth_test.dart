@@ -11,14 +11,16 @@ void main() {
 
     test('is true when expiresAt is in the past', () {
       const past = SyzygyTimestamp(1); // 1ms after epoch — always past
-      expect(const AuthToken(accessToken: 'tok', expiresAt: past).isExpired, isTrue);
+      expect(const AuthToken(accessToken: 'tok', expiresAt: past).isExpired,
+          isTrue);
     });
 
     test('is false when expiresAt is in the future', () {
       final future = SyzygyTimestamp(
         DateTime.now().millisecondsSinceEpoch + 3600000,
       );
-      expect(AuthToken(accessToken: 'tok', expiresAt: future).isExpired, isFalse);
+      expect(
+          AuthToken(accessToken: 'tok', expiresAt: future).isExpired, isFalse);
     });
   });
 

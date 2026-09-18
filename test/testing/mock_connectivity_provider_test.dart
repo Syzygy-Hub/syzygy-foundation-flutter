@@ -37,7 +37,8 @@ void main() {
       provider.setState(ConnectivityState.connected);
       await Future<void>.delayed(Duration.zero);
       await sub.cancel();
-      expect(states, [ConnectivityState.disconnected, ConnectivityState.connected]);
+      expect(states,
+          [ConnectivityState.disconnected, ConnectivityState.connected]);
     });
   });
 }
