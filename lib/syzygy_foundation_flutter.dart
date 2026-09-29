@@ -3,7 +3,7 @@
 /// Exports all contracts, primitives, shared types, and errors.
 /// Does NOT export testing utilities — use syzygy_foundation_flutter_testing.dart
 /// for test support types.
-library syzygy_foundation_flutter;
+library;
 
 // Primitives
 export 'src/primitives/id/syzygy_id.dart';
@@ -48,6 +48,7 @@ export 'src/shared_types/syzygy_environment.dart';
 export 'src/shared_types/syzygy_configuration.dart';
 export 'src/shared_types/syzygy_build_info.dart';
 export 'src/shared_types/syzygy_version.dart';
+export 'src/shared_types/syzygy_foundation_error.dart';
 
 // Errors
 export 'src/errors/syzygy_error_severity.dart';

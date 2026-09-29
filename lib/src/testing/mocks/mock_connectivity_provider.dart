@@ -23,5 +23,6 @@ class MockConnectivityProvider implements ConnectivityProvider {
     _controller.add(newState);
   }
 
+  @override
   void dispose() => _controller.close();
 }
