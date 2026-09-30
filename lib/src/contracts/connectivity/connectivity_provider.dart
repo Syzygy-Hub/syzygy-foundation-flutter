@@ -9,4 +9,7 @@ abstract class ConnectivityProvider {
   Stream<ConnectivityState> get stateStream;
   ConnectivityState get state;
   bool get isConnected;
+
+  /// Cancels in-flight requests and releases resources held by this client.
+  void dispose();
 }

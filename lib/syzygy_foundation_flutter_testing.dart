@@ -3,7 +3,7 @@
 /// Exports all testing utilities (mocks, spies, fixtures) plus re-exports
 /// all runtime types for convenience in test files. Import this in your
 /// tests instead of importing both packages separately.
-library syzygy_foundation_flutter_testing;
+library;
 
 // Re-export all runtime types
 export 'syzygy_foundation_flutter.dart';

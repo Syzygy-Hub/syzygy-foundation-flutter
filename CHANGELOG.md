@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ---
 
+## [2.0.0] - 2026-09-29
+
+### Added
+- `dispose()` added to `NetworkClientProtocol` abstract class — cancels in-flight requests and releases resources (**breaking**)
+- `dispose()` added to `ConnectivityProvider` abstract class — aligns contract with `MockConnectivityProvider` implementation (**breaking**)
+- `canUseBiometric()` added to `AuthProvider` — returns `true` if biometric authentication is available and enrolled (**breaking**)
+- `authenticateWithBiometric(String reason)` added to `AuthProvider` — triggers system biometric prompt; returns `true` on success (**breaking**)
+- `refreshToken()` added to `AuthProvider` — silently refreshes the current session token; returns `true` on success (**breaking**)
+- `SyzygyFoundationError` — new `sealed class` error hierarchy with six subtypes: `NetworkError`, `AuthenticationError`, `NotFoundError`, `TimeoutError`, `CancelledError`, `UnknownError`; all implement `Exception` (**breaking**)
+- `test/contracts/contract_v2_test.dart` — test coverage for all v2.0.0 additions
+
+### Changed
+- Replaced `flutter_lints` dev dependency with pure-Dart `lints: ^5.0.0` — eliminates analyzer errors on cold run (Flutter SDK no longer required to resolve lints) (**breaking** for consumers extending `package:flutter_lints/flutter.yaml`)
+- `analysis_options.yaml` updated to `include: package:lints/recommended.yaml`; Flutter-only lint rules (`prefer_const_constructors`, `avoid_unnecessary_containers`, `sized_box_for_whitespace`) removed
+- CI workflow migrated to pure-Dart toolchain — `dart analyze` and `dart test` replace `flutter analyze` and `flutter test`; `analysis_options.yaml` is fetched from `Syzygy-Hub/.github` at CI runtime and is gitignored locally
+
+### Breaking Changes Summary
+- `NetworkClientProtocol` — `dispose()` must be implemented by all concrete subclasses
+- `ConnectivityProvider` — `dispose()` must be implemented by all concrete subclasses
+- `AuthProvider` — `canUseBiometric()`, `authenticateWithBiometric(String reason)`, and `refreshToken()` must be implemented by all concrete subclasses
+- `SyzygyFoundationError` — new sealed hierarchy in error-handling switch expressions must now be exhaustive
+- `flutter_lints` removed — update `analysis_options.yaml` includes if extending Flutter-specific lint rules
+
+---
+
 ## [Unreleased]
 
 ### Added
@@ -113,7 +138,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - CI coverage step added: `flutter test --coverage` + lcov line coverage summary written to `GITHUB_STEP_SUMMARY`
 - README rewritten to Syzygy engineering standard
 
-[Unreleased]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.2.0...2.0.0
 [1.2.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/releases/tag/1.0.0

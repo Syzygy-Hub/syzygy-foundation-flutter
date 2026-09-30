@@ -11,10 +11,13 @@ class MockAuthProvider implements AuthProvider {
   int refreshCallCount = 0;
   int signOutCallCount = 0;
   Object? refreshError;
-  AuthToken? refreshToken;
+  AuthToken? refreshResult;
+  bool _canUseBiometric = false;
+  bool _biometricResult = false;
+  bool _refreshTokenResult = false;
 
   MockAuthProvider() {
-    refreshToken = Fixtures.authToken();
+    refreshResult = Fixtures.authToken();
   }
 
   @override
@@ -33,7 +36,7 @@ class MockAuthProvider implements AuthProvider {
   Future<AuthToken> refresh() async {
     refreshCallCount++;
     if (refreshError != null) throw refreshError!;
-    return refreshToken!;
+    return refreshResult!;
   }
 
   @override
@@ -42,6 +45,21 @@ class MockAuthProvider implements AuthProvider {
     _state = const Unauthenticated();
     _controller.add(_state);
   }
+
+  @override
+  bool canUseBiometric() => _canUseBiometric;
+
+  void setBiometricAvailable({required bool value}) => _canUseBiometric = value;
+
+  @override
+  Future<bool> authenticateWithBiometric(String reason) async => _biometricResult;
+
+  void setBiometricResult({required bool value}) => _biometricResult = value;
+
+  @override
+  Future<bool> refreshToken() async => _refreshTokenResult;
+
+  void setRefreshTokenResult(bool value) => _refreshTokenResult = value;
 
   void dispose() => _controller.close();
 }

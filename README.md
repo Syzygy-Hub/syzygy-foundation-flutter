@@ -1,4 +1,4 @@
-[![Flutter](https://img.shields.io/badge/Flutter-Dart-7F77DD?style=flat)](https://flutter.dev/) [![Dart](https://img.shields.io/badge/Dart-3.0-1D9E75?logo=dart&logoColor=white&style=flat)](https://dart.dev) [![CI](https://img.shields.io/github/actions/workflow/status/Syzygy-Hub/syzygy-foundation-flutter/ci.yml?label=ci&style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/actions/workflows/ci.yml) [![Version](https://img.shields.io/badge/version-1.2.0-D85A30?style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/releases) [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
+[![Flutter](https://img.shields.io/badge/Flutter-Dart-7F77DD?style=flat)](https://flutter.dev/) [![Dart](https://img.shields.io/badge/Dart-3.0-1D9E75?logo=dart&logoColor=white&style=flat)](https://dart.dev) [![CI](https://img.shields.io/github/actions/workflow/status/Syzygy-Hub/syzygy-foundation-flutter/ci.yml?label=ci&style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/actions/workflows/ci.yml) [![Version](https://img.shields.io/badge/version-2.0.0-D85A30?style=flat)](https://github.com/Syzygy-Hub/syzygy-foundation-flutter/releases) [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Syzygy-Hub/.github/main/brand/assets/banners/syzygy-banner-dark-1200.png">
@@ -58,7 +58,7 @@ For the full release standard see the [Syzygy-Hub/.github release standard](http
 
 ```yaml
 dependencies:
-  syzygy_foundation_flutter: ^1.2.0
+  syzygy_foundation_flutter: ^2.0.0
 ```
 
 ```dart
@@ -93,12 +93,40 @@ For the full ecosystem architecture see [syzygy-ecosystem.md](https://github.com
 
 ### Contracts
 
-- `NetworkClientProtocol` / `NetworkRequest` / `NetworkResponse` — networking contract
-- `StorageProvider` / `StorageKey` — type-safe storage contract
-- `AuthProvider` / `AuthToken` / `AuthState` — authentication contract
-- `AnalyticsProvider` / `AnalyticsEvent` — analytics contract
-- `LoggerProtocol` / `LogLevel` / `LogEntry` — logging contract
-- `ConnectivityProvider` / `ConnectivityState` — connectivity contract
+#### `NetworkClientProtocol`
+```dart
+Future<NetworkResponse> execute(NetworkRequest request);
+void dispose(); // v2.0.0 — cancels in-flight requests and releases resources
+```
+
+#### `StorageProvider` / `StorageKey`
+Type-safe local persistence contract.
+
+#### `AuthProvider`
+```dart
+Stream<AuthState> get stateStream;
+AuthState get state;
+void authenticate(AuthToken token);
+Future<AuthToken> refresh();
+void signOut();
+bool canUseBiometric();                              // v2.0.0
+Future<bool> authenticateWithBiometric(String reason); // v2.0.0
+Future<bool> refreshToken();                         // v2.0.0
+```
+
+#### `ConnectivityProvider`
+```dart
+Stream<ConnectivityState> get stateStream;
+ConnectivityState get state;
+bool get isConnected;
+void dispose(); // v2.0.0 — cancels subscriptions and releases resources
+```
+
+#### `AnalyticsProvider` / `AnalyticsEvent`
+Analytics tracking contract.
+
+#### `LoggerProtocol` / `LogLevel` / `LogEntry`
+Structured logging contract.
 
 ### Shared Types
 
@@ -109,9 +137,27 @@ For the full ecosystem architecture see [syzygy-ecosystem.md](https://github.com
 
 ### Errors
 
+#### `SyzygyError` (existing)
 - `SyzygyError` — base error abstract class
 - `SyzygyErrorCode` — typed, extensible error codes
 - `SyzygyErrorSeverity` — error severity levels
+
+#### `SyzygyFoundationError` (v2.0.0)
+
+A Dart `sealed class` hierarchy for Foundation-level errors. Use in exhaustive `switch` expressions:
+
+```dart
+switch (error) {
+  case NetworkError(:final underlying):   // network-layer failure
+  case AuthenticationError():              // authentication failure
+  case NotFoundError():                    // resource not found
+  case TimeoutError():                     // operation timed out
+  case CancelledError():                   // operation cancelled
+  case UnknownError(:final underlying):   // unclassified error
+}
+```
+
+All subtypes implement `Exception`. `NetworkError`, `AuthenticationError`, and `UnknownError` accept an optional `underlying` `Object?` for wrapping the original exception.
 
 ### Testing Support
 
@@ -177,8 +223,18 @@ void main() {
 
 - Async pattern: `Future`
 - `SyzygyError` is an abstract class implementing `Exception`
+- `SyzygyFoundationError` is a Dart `sealed class` (not an enum) — use exhaustive `switch` for compile-time coverage
 - `ConnectivityProvider`: controlled — pass `isOffline` prop (no first-party network detection)
 - `SyzygyBuildInfo`: consumer-injected — populate at app startup
+- Linting: `lints: ^5.0.0` (pure Dart, no Flutter SDK required). `flutter_lints` was removed in v2.0.0. `analysis_options.yaml` is fetched from `Syzygy-Hub/.github` at CI runtime and is gitignored locally.
+
+## Breaking Changes (v2.0.0)
+
+- **`NetworkClientProtocol.dispose()`** — abstract method added. All concrete implementations must implement `dispose()`.
+- **`ConnectivityProvider.dispose()`** — abstract method added. All concrete implementations must implement `dispose()`.
+- **`AuthProvider`** — three new abstract methods: `canUseBiometric()`, `authenticateWithBiometric(String reason)`, and `refreshToken()`. All concrete implementations must implement these.
+- **`SyzygyFoundationError`** — new sealed error hierarchy. Callers should switch exhaustively on this type in error-handling code.
+- **`flutter_lints` → `lints`** — if your project extended `package:flutter_lints/flutter.yaml`, update to `package:lints/recommended.yaml`.
 
 ## Contributing
 

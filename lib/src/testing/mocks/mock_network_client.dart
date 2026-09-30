@@ -17,4 +17,7 @@ class MockNetworkClient implements NetworkClientProtocol {
     }
     return responses.removeAt(0);
   }
+
+  @override
+  void dispose() {}
 }

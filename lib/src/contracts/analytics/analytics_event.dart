@@ -7,7 +7,7 @@ import '../../primitives/time/syzygy_timestamp.dart';
 class AnalyticsEvent {
   final String name;
 
-  /// Map<String, Object?> for flexibility. Values should be primitives
+  /// `Map<String, Object?>` for flexibility. Values should be primitives
   /// (String, num, bool, or null).
   final Map<String, Object?> properties;
   final SyzygyTimestamp timestamp;
