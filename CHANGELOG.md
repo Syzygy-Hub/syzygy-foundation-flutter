@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ---
 
+## [Unreleased]
+
+## [3.0.0] - 2026-10-01
+
+### Changed
+- CI migrated from inline workflow to Syzygy-Hub reusable workflow (`flutter-ci.yml`)
+
 ## [2.0.0] - 2026-09-29
 
 ### Added
@@ -28,16 +35,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - `AuthProvider` — `canUseBiometric()`, `authenticateWithBiometric(String reason)`, and `refreshToken()` must be implemented by all concrete subclasses
 - `SyzygyFoundationError` — new sealed hierarchy in error-handling switch expressions must now be exhaustive
 - `flutter_lints` removed — update `analysis_options.yaml` includes if extending Flutter-specific lint rules
-
----
-
-## [Unreleased]
-
-### Added
-
-### Changed
-
-### Fixed
 
 ---
 
@@ -138,7 +135,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - CI coverage step added: `flutter test --coverage` + lcov line coverage summary written to `GITHUB_STEP_SUMMARY`
 - README rewritten to Syzygy engineering standard
 
-[Unreleased]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/2.0.0...HEAD
+[Unreleased]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/2.0.0...3.0.0
 [2.0.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.2.0...2.0.0
 [1.2.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/Syzygy-Hub/syzygy-foundation-flutter/compare/1.0.0...1.1.0
