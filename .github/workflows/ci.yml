@@ -4,53 +4,7 @@ on:
   push:
     branches: ['**']
     tags-ignore: ['*']
-  pull_request:
-    branches: [main]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: dart-lang/setup-dart@v1
-
-      - name: Fetch analysis config
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/Syzygy-Hub/.github/main/engineering/tooling/dart/analysis_options.yaml \
-            -o analysis_options.yaml
-
-      - name: Get dependencies
-        run: dart pub get
-
-      - name: Analyze
-        run: dart analyze --fatal-warnings
-
-      - name: Test with coverage
-        run: dart test --coverage=coverage
-
-      - name: Upload coverage
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: coverage
-          if-no-files-found: warn
-
-      - name: Coverage summary
-        run: |
-          if [ -f coverage/lcov.info ]; then
-            LINES_FOUND=$(grep -c "^DA:" coverage/lcov.info || echo 0)
-            LINES_HIT=$(grep "^DA:" coverage/lcov.info | grep -cv ",0$" || echo 0)
-            {
-              echo "## Coverage Report"
-              echo "Lines found: $LINES_FOUND"
-              echo "Lines hit: $LINES_HIT"
-              if [ "$LINES_FOUND" -gt 0 ]; then
-                PCT=$(( LINES_HIT * 100 / LINES_FOUND ))
-                echo "Coverage: ${PCT}%"
-              fi
-            } >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "## Coverage Report — lcov.info not found." >> "$GITHUB_STEP_SUMMARY"
-          fi
+  ci:
+    uses: Syzygy-Hub/.github/.github/workflows/flutter-ci.yml@main
